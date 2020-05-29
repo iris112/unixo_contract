@@ -10,7 +10,7 @@
 		$fn = function($item, $deep = 0) use(&$Db, &$fn) {
 			$res = ['n' => 'ID: '.$item['id'], 'l' => $item['level'] ?: 1];
 
-			if($deep < 8 && count($t = $Db->rows("SELECT `id`,`address`, (SELECT MAX(`level`) FROM `sk_events` WHERE `user` = users.address AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'UpLevel') 'level' FROM `users` WHERE `pid` = ? ORDER BY `id` DESC", [$item['id']]))) {
+			if($deep < 8 && count($t = $Db->rows("SELECT `id`,`address`, (SELECT MAX(`level`) FROM `sk_events` WHERE `user` = users.address AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'buyLevelEvent') 'level' FROM `users` WHERE `pid` = ? ORDER BY `id` DESC", [$item['id']]))) {
 				foreach($t as $v) $res['children'][] = $fn($v, $deep + 1);
 			}
 
@@ -27,9 +27,9 @@
 
 		// Вывод данных
 		$App->layout->render(__DIR__.'/views/index', [
-			'count' => ($count = $Db->val("SELECT COUNT(*) FROM `sk_events` WHERE `user` = ? AND `type` = 'Profit' $query", $params)),
+			'count' => ($count = $Db->val("SELECT COUNT(*) FROM `sk_events` WHERE `user` = ? AND `type` = 'getMoneyForLevelEvent' $query", $params)),
 			'pag' => ($pag = $Pagination->create($count, $App->get['p'], $App->get['l'], $search, 20)),
-			'repayments' => $Db->rows("SELECT `time`, `ref` 'address',  (SELECT id FROM users WHERE address = sk_events.ref) 'id', `value` 'amount' FROM `sk_events` WHERE `user` = ? AND `type` = 'Profit' $query ORDER BY `".$search['s']."` ".($search['r'] ? 'ASC' : 'DESC')." LIMIT ".$pag['offset'].", ".$pag['limit'], $params),
+			'repayments' => $Db->rows("SELECT `time`, `ref` 'address',  (SELECT id FROM users WHERE address = sk_events.ref) 'id', (SELECT price FROM levels WHERE id = sk_events.level) 'amount' FROM `sk_events` WHERE `user` = ? AND `type` = 'getMoneyForLevelEvent' $query ORDER BY `".$search['s']."` ".($search['r'] ? 'ASC' : 'DESC')." LIMIT ".$pag['offset'].", ".$pag['limit'], $params),
 			'rates' => module('site/main')->getRates(),
 			'tree' => $App->auth->user['id'] > 0 ? $fn(['id' => $App->auth->user['id'], 'address' => $App->auth->user['address'], 'level' => $App->auth->user['level']]) : []
 		], [
@@ -42,6 +42,6 @@
 	$this->getPartnerInfo = function($App, $next) use(&$Db) {
 		$App->json([
 			'success' => true,
-			'user' => $Db->row("SELECT `id`,CONCAT(`address`, ' ') 'address',(SELECT MAX(`level`) FROM `sk_events` WHERE `user` = `users`.`address` AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'UpLevel') 'level' FROM `users` WHERE `id` = ? OR `address` = ?", [$App->params['id'], $App->params['id']])
+			'user' => $Db->row("SELECT `id`,CONCAT(`address`, ' ') 'address',(SELECT MAX(`level`) FROM `sk_events` WHERE `user` = `users`.`address` AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'buyLevelEvent') 'level' FROM `users` WHERE `id` = ? OR `address` = ?", [$App->params['id'], $App->params['id']])
 		]);
 	};

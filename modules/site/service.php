@@ -5,98 +5,64 @@
 	$Infura = module('infura');
 
 	$this->contract = '';
-	$this->contract_deploy_block = 0;
-
-	// Парсить лог
-	$this->parseLog = function($log) use(&$Db, &$Infura) {
-		$time = time();
-		$data = $Infura->parseData($log['data']);
-
-    	// event Register(address indexed addr, address indexed upline, uint256 id);
-		if($log['topics'][0] == '0xcc0bec1447060c88cdc5a739cf29cfa26c453574dd3f5b9e4dcc317d6401cb1c') {
-			$Db->insert('sk_events', [
-				'tx' => $log['transactionHash'],
-				'index' => hexdec(substr($log['logIndex'], 2)),
-				'type' => 'Register',
-				'user' => '0x'.substr($log['topics'][1], 26),
-				'ref' => '0x'.substr($log['topics'][2], 26),
-				'level' => 1,
-				'time' => $time
-			]);
-
-			$Db->insert('users', [
-				'id' => hexdec($data[0]),
-				'pid' => $Db->val("SELECT `id` FROM `users` WHERE `address` = ?", ['0x'.substr($log['topics'][2], 26)]),
-				'address' => '0x'.substr($log['topics'][1], 26),
-			]);
-		}
-	    // event UpLevel(address indexed addr, uint8 level, uint40 expires);
-		else if($log['topics'][0] == '0x47e75f266c9bc08e80aafb7c86af9dd1dfcaef630293a3960eb6710720adbb1d') {
-			$Db->insert('sk_events', [
-				'tx' => $log['transactionHash'],
-				'index' => hexdec(substr($log['logIndex'], 2)),
-				'type' => 'UpLevel',
-				'user' => '0x'.substr($log['topics'][1], 26),
-				'level' => hexdec($data[0]) + 1,
-				'time' => $time
-			]);
-		}
-	    // event Profit(address indexed addr, address indexed referral, uint256 value);
-		else if($log['topics'][0] == '0x927ca72beeafa042127c9b97483d6b6f5ada2790237a7b3310232cab8888ac27') {
-			$Db->insert('sk_events', [
-				'tx' => $log['transactionHash'],
-				'index' => hexdec(substr($log['logIndex'], 2)),
-				'type' => 'Profit',
-				'user' => '0x'.substr($log['topics'][1], 26),
-				'ref' => '0x'.substr($log['topics'][2], 26),
-				'value' => hexdec($data[0]) / 1e18,
-				'time' => $time
-			]);
-		}
-	    // event Lost(address indexed addr, address indexed referral, uint256 value);
-		else if($log['topics'][0] == '0xb38c5ffc8559f83ecf23d55719cd798bf510f15e45ad81bdc0b0026fa9d7311f') {
-			$Db->insert('sk_events', [
-				'tx' => $log['transactionHash'],
-				'index' => hexdec(substr($log['logIndex'], 2)),
-				'type' => 'Lost',
-				'user' => '0x'.substr($log['topics'][1], 26),
-				'ref' => '0x'.substr($log['topics'][2], 26),
-				'value' => hexdec($data[0]) / 1e18,
-				'time' => $time
-			]);
-		}
-	};
 
 	// Синхронизироваться с смартконтрактом
 	$this->syncWithContract = function($App, $data = null) use(&$Db, &$Infura) {
-		if($App->params['tx']) {
-			try {
-				$tx = $Infura->api('eth_getTransactionReceipt', [$App->params['tx']]);
+		$types = [
+			'0x788c06d2405ae89dd3f0528d38be7691289474d72176408bc2c2406dc5e342f1' => 'regLevelEvent',
+			'0x9ea70f0eb33d898c3336ecf2c0e3cf1c0195c13ad3fbcb34447777dbfd5ff2d0' => 'buyLevelEvent',
+			//'' => 'prolongateLevelEvent',
+			'0xce7dc747411ac40191c5335943fcc79d8c2d8c01ca5ae83d9fed160409fa6120' => 'getMoneyForLevelEvent',
+			'0x7df0f6bac5c770af7783500bb7f1c0d073adb11316004ba6f9f6c704af1a1aea' => 'lostMoneyForLevelEvent',
+		];
 
-				foreach((array)$tx['logs'] as $log) $this->parseLog($log);
-
-				$App->json(['status' => !!hexdec($tx['status'])]);
-			}
-			catch(Exception $e) {
-				$App->json(['status' => false]);
-			}
-		}
-		else {
-			$block = (int)$Db->storage('syncWithContract.lastBlock') ?: $this->contract_deploy_block;
-			
-			try {
-				foreach($Infura->getLogs($this->contract, '0x'.dechex($block - 10), [], '0x'.dechex($block + 100000)) as $log) {
-					if(($b = hexdec(substr($log['blockNumber'], 2))) > $block) {
-						$block = $b;
-					}
-
-					$this->parseLog($log);
+		$block = (int)$Db->storage('syncWithContract.lastBlock');
+		
+		try {
+			foreach($Infura->getLogs($this->contract, '0x'.dechex($block - 10), [], '0x'.dechex($block + 100000)) as $v) {
+				if(($b = hexdec(substr($v['blockNumber'], 2))) > $block) {
+					$block = $b;
 				}
 
-				$Db->storage('syncWithContract.lastBlock', $block);
+				if($type = $types[$v['topics'][0]]) {
+					$data1 = hexdec(substr($v['data'], 2, 64));
+					$data2 = hexdec(substr($v['data'], 66, 64));
+
+					$Db->insert('sk_events', [
+						'tx' => $v['transactionHash'],
+						'index' => hexdec(substr($v['logIndex'], 2)),
+						'type' => $type,
+						'user' => '0x'.($user = substr($v['topics'][1], 26)),
+						'ref' => (($ref = substr($v['topics'][2], 26)) ? '0x'.$ref : ''),
+						'level' => $type == 'regLevelEvent' ? 0 : $data1,
+						'time' => $type == 'regLevelEvent' ? $data1 : $data2
+					]);
+
+					if($type == 'regLevelEvent' && !$Db->val("SELECT `id` FROM `users` WHERE `address` = ?", ['0x'.$user])) {
+						if(($data = array_map('hexdec', $Infura->parseData($Infura->call($this->contract, '0xa87430ba000000000000000000000000'.$user, $this->contract)))) && $data[1] > 0) {
+							$Db->insert('users', [
+								'id' => $data[1],
+								'pid' => $data[2],
+								'address' => '0x'.$user
+							]);
+						}
+					}
+				}
 			}
-			catch(Exception $e) {
-				$Db->storage('syncWithContract.error', $e->getMessage(), time());
+
+			$Db->storage('syncWithContract.lastBlock', $block);
+		}
+		catch(Exception $e) {
+			$Db->storage('syncWithContract.error', $e->getMessage(), time());
+		}
+
+		foreach($Db->rows("SELECT `user` FROM `sk_events` WHERE `type` = 'regLevelEvent' AND `user` NOT IN(SELECT `address` FROM `users`) LIMIT 5", [], PDO::FETCH_COLUMN) as $addr) {
+			if(($data = array_map('hexdec', $Infura->parseData($Infura->call($this->contract, '0xa87430ba000000000000000000000000'.substr($addr, 2), $this->contract)))) && $data[1] > 0) {
+				$Db->insert('users', [
+					'id' => $data[1],
+					'pid' => $data[2],
+					'address' => $addr
+				]);
 			}
 		}
 	};

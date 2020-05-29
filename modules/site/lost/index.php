@@ -15,8 +15,8 @@
 		if($App->get['r']) $search['r'] = 1;
 
 		$App->layout->render(__DIR__.'/views/index', [
-			'count' => ($count = $Db->val("SELECT COUNT(*) FROM `sk_events` WHERE `user` = ? AND `type` = 'Lost' $query", $params)),
+			'count' => ($count = $Db->val("SELECT COUNT(*) FROM `sk_events` WHERE `user` = ? AND `type` = 'lostMoneyForLevelEvent' $query", $params)),
 			'pag' => ($pag = $Pagination->create($count, $App->get['p'], $App->get['l'], $search, 20)),
-			'losts' => $Db->rows("SELECT `time`, `ref` 'address', `level`,  (SELECT id FROM users WHERE address = sk_events.ref) 'id', `value` 'amount' FROM `sk_events` WHERE `user` = ? AND `type` = 'Lost' $query ORDER BY `".$search['s']."` ".($search['r'] ? 'ASC' : 'DESC')." LIMIT ".$pag['offset'].", ".$pag['limit'], $params)
+			'losts' => $Db->rows("SELECT `time`, `ref` 'address', `level`,  (SELECT id FROM users WHERE address = sk_events.ref) 'id', (SELECT price FROM levels WHERE id = sk_events.level) 'amount' FROM `sk_events` WHERE `user` = ? AND `type` = 'lostMoneyForLevelEvent' $query ORDER BY `".$search['s']."` ".($search['r'] ? 'ASC' : 'DESC')." LIMIT ".$pag['offset'].", ".$pag['limit'], $params)
 		]);
 	};

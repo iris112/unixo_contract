@@ -48,7 +48,7 @@
 
         // Collapse after the second level
         window.toggleTree = function() {
-            (root.children || []).forEach(function collapse(d) {
+            root.children.forEach(function collapse(d) {
               if(d.children) {
                 d._children = d.children
                 if(d._children) d._children.forEach(collapse)

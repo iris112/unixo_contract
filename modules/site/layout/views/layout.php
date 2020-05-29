@@ -4,11 +4,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<script>'fetch' in window && 'CSS' in window && CSS.supports('color', 'var(--)') ? '' : location.href = '/badbrowser/'</script>
-		<title><?= $title ?: l('UNIXO - Personal Account'); ?></title>
-		<meta name="description" content="<?= l('UNIXO - Personal Account'); ?>"/>
-		<meta name="keywords" content="<?= l('UNIXO, smart-contracts, eth, ethereum'); ?>"/>
-		<meta property="og:title" content="<?= l('UNIXO - Personal Account'); ?>">
-		<meta property="og:description" content="<?= l('UNIXO - Personal Account'); ?>">
+		<title><?= $title ?: l('ETHRUN - Personal Account'); ?></title>
+		<meta name="description" content="<?= l('ETHRUN - Personal Account'); ?>"/>
+		<meta name="keywords" content="<?= l('ETHRUN, smart-contracts, eth, ethereum'); ?>"/>
+		<meta property="og:title" content="<?= l('ETHRUN - Personal Account'); ?>">
+		<meta property="og:description" content="<?= l('ETHRUN - Personal Account'); ?>">
 		<meta property="og:url" content="<?= $this->origin ?>">
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="/modules/site/layout/assets/common.css?<?= filemtime(__DIR__.'/../assets/common.css') ?>">
@@ -21,16 +21,16 @@
 	<body>
 		<div class="layout">
 			<div class="aside">
-				<a class="aside__logo" href="https://unixo.io/"><img src="/modules/site/layout/assets/logo.svg?3"></a>
+				<a class="aside__logo" href="https://ethrun.io/"><img src="/modules/site/layout/assets/logo.svg?3"></a>
 				<div class="aside__nav">
 					<label><?= l('Меню аккаунта'); ?></label>
 					<a href="/"<?= $this->path == '/' ? ' class="active"' : '' ?>><i class="fa fa-fw fa-user-circle"></i> <span><?= l('Панель управления'); ?></span></a>
 					<a href="/partners/"<?= $this->path == '/partners/' ? ' class="active"' : '' ?>><i class="fa fa-fw fa-network-wired"></i> <span><?= l('Партнеры'); ?></span></a>
 					<a href="/uplines/"<?= $this->path == '/uplines/' ? ' class="active"' : '' ?>><i class="fa fa-fw fa-users"></i> <span><?= l('Аплайны'); ?></span></a>
-					<a href="/lost/"<?= $this->path == '/lost/' ? ' class="active"' : '' ?>><i class="fa fa-fw fa-search-dollar"></i> <span><?= l('Упущенные платежи'); ?></span></a>
+					<a href="/lost/"<?= $this->path == '/lost/' ? ' class="active"' : '' ?>><i class="fa fa-fw fa-search-dollar"></i> <span><?= l('Утерянные переводы'); ?></span></a>
 					<a href="/auth/logout/"><i class="fa fa-fw fa-sign-out-alt"></i> <span><?= l('Выход'); ?></span></a>
 				</div>
-				<div class="aside__copyright">© <?= date('Y'); ?> Unixo.io</div>
+				<div class="aside__copyright">© <?= date('Y'); ?> Ethrun.io</div>
 			</div>
 			<div class="main">
 				<div class="header">
@@ -66,10 +66,6 @@
 						<?= l('Адрес смарт-контракта:'); ?><br/>
 						<a href="https://etherscan.io/address/<?= module('site/service')->contract; ?>" target="_blank" class="addr"><?= module('site/service')->contract; ?></a>&nbsp;&nbsp;
 						<a href="#" onclick="copyText('<?= module('site/service')->contract; ?>'); return false;"><i class="fa fa-copy"></i></a>
-					</div>
-					<div style="flex:1 0 0;"></div>
-					<div style="text-align:right"> 
-						Developed by<br/><a href="https://smartcontract.ru" target="_blank">smartcontract.ru</a>
 					</div>
 				</div>
 			</div>

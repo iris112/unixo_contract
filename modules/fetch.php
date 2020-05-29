@@ -3,7 +3,7 @@
 
 	// Запрос
 	$this->query = function($url, array $options = [], array $args = []) {
-		curl_setopt_array($ch = curl_init(), $args + [
+		curl_setopt_array($ch = curl_init(), [
 			CURLOPT_URL => $url,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_HEADER => true,
@@ -19,7 +19,7 @@
 			CURLOPT_COOKIE => http_build_query($cookie = (array)$options['cookie'], '', '; '),
 			CURLOPT_USERAGENT => $options['user_agent'] ?: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
 			CURLOPT_REFERER => $options['referrer']
-		]);
+		] + $args);
 
 		$content = curl_exec($ch);
 		$info = curl_getinfo($ch);
@@ -39,6 +39,6 @@
 			'ok' => $info['http_code'] >= 200 && $info['http_code'] < 300,
 			'headers' => (array)$headers,
 			'cookie' => $cookie,
-			'body' => stripos($headers['Content-Type'], 'application/json') !== false || stripos($headers['content-type'], 'application/json') !== false ? json_decode($body, true) : $body
+			'body' => stripos($headers['Content-Type'], 'application/json') !== false ? json_decode($body, true) : $body
 		];
 	};

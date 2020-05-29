@@ -5,7 +5,7 @@
 	window.buyLevel = function(level, price) {
 		getWeb3(function(web3) {
 			web3.eth.getGasPrice(function(err, res) {
-				web3.eth.contract([{"inputs":[{"internalType":"uint256","name":"_upline_id","type":"uint256"}],"name":"register","outputs":[],"stateMutability":"payable","type":"function"}]).at(document.querySelector('[name="eth-contract"]').content).register(1, {
+				web3.eth.contract([{"constant":false,"inputs":[{"internalType":"uint256","name":"_level","type":"uint256"}],"name":"buyLevel","outputs":[],"payable":true,"stateMutability":"payable","type":"function"}]).at(document.querySelector('[name="eth-contract"]').content).buyLevel(level, {
 					value: web3.toWei(price),
 					gasPrice: !err ? parseInt(res.toFixed()) + 7e9 : 15e9
 				}, function(err, tx) {

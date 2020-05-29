@@ -2,7 +2,6 @@
 <div class="page" id="Partner">
 	<h1 class="page__title"><?= l('Партнеры'); ?></h1>
 	<div class="page__body">
-		<!--
 		<div class="partner">
 			<div class="block">
 				<div class="block__title"><?= l('Ваша партнерская ссылка'); ?></div>
@@ -31,7 +30,6 @@
 				</div>
 			</div>
 		</div>
-		-->
 		<? if($this->auth->user['id'] > 0) : ?>
 			<div class="block block_mt30">
 				<div class="block__title"><?= l('Ваша структура'); ?></div>

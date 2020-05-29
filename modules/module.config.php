@@ -3,7 +3,7 @@
 
 	return [
 		'db' => [
-			'connect' => (DEBUG ? ['localhost', 'account.unixo.io', 'root', ''] : ['localhost', 'account.unixo.io', 'unixo', 'szekUqRtzBkvzJ6Z'])
+			'connect' => (DEBUG ? ['localhost', 'account.ethrun.io', 'root', ''] : ['localhost', 'account.ethrun.io', 'ethrun', 'szekUqRtzBkvzJ6Z'])
 		],
 		'app' => [
 			'route' => [
@@ -20,7 +20,6 @@
 					['/', 'site/main:index'],
 					['/auth/', 'site/auth:index'],
 					['/auth/logout/', 'site/auth:logout'],
-					['/auth/freeReferrer/:id/', 'site/auth:freeReferrer'],
 					['/a/:id/', 'site/auth:rlink'],
 					['/partners/', 'site/partners:index'],
 					['/partners/:id/', 'site/partners:item'],
@@ -38,11 +37,9 @@
 			]
 		],
 		'infura' => [
-			'network' => 'mainnet',
 			'key' => '4db4c898fc1d4346acc5c2d80967ee40'
 		],
 		'site/service' => [
-			'contract_deploy_block' => 9966745,
-			'contract' => '0x015496890621576deffaE01dB042106B23D76062'
+			'contract' => '0x206C97c79368a29631d26f16405217154e4cCD41'
 		]
 	];

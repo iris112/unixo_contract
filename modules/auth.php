@@ -12,7 +12,7 @@
 			$this->user = [
 				'id' => $Db->val("SELECT `id` FROM `users` WHERE `address` = ?", [$address]),
 				'address' => $address,
-				'level' => $Db->val("SELECT MAX(`level`) FROM `sk_events` WHERE `user` = ? AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'UpLevel'", [$address])
+				'level' => $Db->val("SELECT MAX(`level`) FROM `sk_events` WHERE `user` = ? AND `time` > UNIX_TIMESTAMP() - (86400 * 30) AND `type` = 'buyLevelEvent'", [$address])
 			];
 		}
 

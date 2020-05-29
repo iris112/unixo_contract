@@ -26,12 +26,11 @@
 						<? if($upline) : ?>
 							<input type="hidden" name="upline" value="<?= $upline ?>"/>
 						<? else: ?>
-							<input type="hidden" name="upline" value=""/>
-							<!--<div class="auth__subtitle"><a href="#" onclick="this.parentNode.nextSibling.style.display = 'block'; this.parentNode.remove(); return false;"><?= l('Указать пригласителя вручную'); ?></a></div>
+							<div class="auth__subtitle"><a href="#" onclick="this.parentNode.nextSibling.style.display = 'block'; this.parentNode.remove(); return false;"><?= l('Указать пригласителя вручную'); ?></a></div>
 							<div style="display:none;">
 								<div class="auth__subtitle"><?= l('Введите желаемый Ethereum адрес аплайна или оставьте его пустым что бы получить автоматически'); ?></div>
 								<input placeholder="<?= l('ETH адрес или ID аплайна'); ?>" name="upline" value="" pattern="^(0x[a-f0-9A-F]{40}|[0-9]+)$" class="inp auth__inp">
-							</div>-->
+							</div>
 						<? endif; ?>
 					<? endif; ?>
 					<button class="btn btn_primary auth__btn" type="submit"><?= $regis ? l('Зарегистрироваться') : l('Войти автоматически'); ?></button>
@@ -40,8 +39,8 @@
 					<div class="auth__desc only-noweb3">
 						<p><?= l('К сожалению, мы не смогли установить соединение с Вашим кошельком для автоматической регистрации.'); ?></p>
 						<p><?= l('Это можно выполнить вручную, создав транзакцию со следующими параметрами:'); ?></p>
-						<p><?= l('Адрес Получателя перевода:'); ?> <b>0x015496890621576deffaE01dB042106B23D76062</b></p>
-						<p><?= l('Данные Data транзакции:'); ?> <b><?= $upline_address ?: '0xd3cf11873DA75E5AaE7Fa46425FA6672EaA4a121' ?></b></p>
+						<p><?= l('Адрес Получателя перевода:'); ?> <b>0x206C97c79368a29631d26f16405217154e4cCD41</b></p>
+						<p><?= l('Данные Data транзакции:'); ?> <b><?= $upline_address ?: '0x174b16cc1af3a9e9b0aa89e3d50598b1593c2084' ?></b></p>
 						<p><?= l('Сумма перевода:'); ?> <b>0.1 ETH</b></p>
 						<p><?= l('Лимит газа:'); ?> <b>400.000</b></p>
 						</div>
@@ -65,7 +64,7 @@
 			<a href="/" class="auth__logo"><img src="/modules/site/auth/assets/logo.svg?3"></a>
 			<div class="auth__subtitle2"><?= l('Следите за нами в социальных сетях'); ?></div>
 			<div class="auth__social">
-				<a href="https://t.me/unixo_chat" target="_blank"><i class="fab fa-fw fa-telegram-plane"></i></a>
+				<a href="https://t.me/ethrun_group" target="_blank"><i class="fab fa-fw fa-telegram-plane"></i></a>
 				<a href="https://discordapp.com/invite/3ECKbSG" target="_blank"><i class="fab fa-fw fa-discord"></i></a>
 				<!--<a href="#" target="_blank"><i class="fab fa-fw fa-twitter"></i></a>
 				<a href="#" target="_blank"><i class="fab fa-fw fa-instagram"></i></a>
@@ -73,7 +72,7 @@
 			</div>
 			<br/>
 			<div class="auth__subtitle2"><?= l('На любой вопрос вы можете получить ответ в нашем чате:'); ?></div>
-			<a href="https://t.me/unixo_chat" target="_blank" class="btn btn_transparent auth__btn"><i class="fab fa-telegram-plane"></i> <?= l('Чат в Telegram'); ?></a>
+			<a href="https://t.me/ethrun_group" target="_blank" class="btn btn_transparent auth__btn"><i class="fab fa-telegram-plane"></i> <?= l('Чат в Telegram'); ?></a>
 			<div class="auth__links">
 				<a href="https://etherscan.io/address/<?= module('site/service')->contract; ?>" target="_blank"><?= l('Адрес смарт-контракта'); ?></a>
 				<a href="#" target="_blank"><?= l('Правила'); ?></a>
@@ -82,6 +81,6 @@
 		</div>
 	</div>
 	<? if($regis && !$upline) : ?>
-		<!--<div class="auth__notify"><i class="fa fa-exclamation-circle"></i> <?= l('Вы пришли без партнерской ссылки, или она не сработала, поэтому Ваш аплайн неизвестен. Если Вы знаете id или Ethereum адрес Вашего аплайна, то впишите его в поле'); ?></div>-->
+		<div class="auth__notify"><i class="fa fa-exclamation-circle"></i> <?= l('Вы пришли без партнерской ссылки, или она не сработала, поэтому Ваш аплайн неизвестен. Если Вы знаете id или Ethereum адрес Вашего аплайна, то впишите его в поле'); ?></div>
 	<? endif; ?>
 </div>

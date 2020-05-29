@@ -19,13 +19,13 @@
 		static $a, $b;
 
 		if(!$a) {
-			$a = (float)$Db->val("SELECT SUM(`value`) FROM `sk_events` WHERE `user` = ? AND `type` = 'Profit'", [$App->auth->user['address']]);
+			$a = (float)$Db->val("SELECT SUM((SELECT price FROM levels WHERE id = sk_events.level)) FROM `sk_events` WHERE `user` = ? AND `type` = 'getMoneyForLevelEvent'", [$App->auth->user['address']]);
 			$b = $a * $this->getRates()['eth'];
 		}
 
 		return [
 			'msg' => l('Я уже заработал {0} ETH (${1}) за 5 дней. Присоединяйся!', round($a, 2), round($b)),
-			'url' => $App->origin.'a/1/'//$App->origin.'a/'.$App->auth->user['id'].'/'
+			'url' => $App->origin.'a/'.$App->auth->user['id'].'/'
 		];
 	};
 
@@ -38,7 +38,7 @@
 			if($check[$addr]) return;
 			$check[$addr] = true;
 
-			foreach($Db->rows("SELECT `time`,`user` FROM `sk_events` WHERE `ref` = ? AND `type` = 'Register'", [$addr]) as $v) {
+			foreach($Db->rows("SELECT `time`,`user` FROM `sk_events` WHERE `ref` = ? AND `type` = 'regLevelEvent'", [$addr]) as $v) {
 				$referrals_by_date[date('d.m.Y', $v['time'])]++;
 				$fn($v['user']);
 			}
@@ -47,8 +47,8 @@
 		uksort($referrals_by_date, function($a, $b) { return strtotime($a) > strtotime($b); });
 
 		// Получить инфу об остатках левелов
-		$my_levels = ['1' => $Db->val("SELECT `time` FROM `sk_events` WHERE `user` = ? AND `type` = 'Register'", [$App->auth->user['address']]) + 86400 * 30];
-		foreach($Db->rows("SELECT level,`time` FROM `sk_events` WHERE `user` = ? AND `type` = 'UpLevel'", [$App->auth->user['address']], PDO::FETCH_NUM) as $v) {
+		$my_levels = ['1' => $Db->val("SELECT `time` FROM `sk_events` WHERE `user` = ? AND `type` = 'regLevelEvent'", [$App->auth->user['address']]) + 86400 * 30];
+		foreach($Db->rows("SELECT level,`time` FROM `sk_events` WHERE `user` = ? AND `type` = 'buyLevelEvent'", [$App->auth->user['address']], PDO::FETCH_NUM) as $v) {
 			if($my_levels[$v[0]]) $my_levels[$v[0]] += 86400 * 30;
 			else $my_levels[$v[0]] = $v[1] + 86400 * 30;
 		}
@@ -58,9 +58,9 @@
 			'referrals' => array_sum($referrals_by_date),
 			'levels' => $Db->rows("SELECT id,price FROM `levels`"),
 			'my_levels' => $my_levels,
-			'profit_eth' => ($t = $Db->val("SELECT `value` FROM `sk_events` WHERE `user` = ? AND `type` = 'Profit'", [$App->auth->user['address']])),
+			'profit_eth' => ($t = $Db->val("SELECT SUM((SELECT price FROM levels WHERE id = sk_events.level)) FROM `sk_events` WHERE `user` = ? AND `type` = 'getMoneyForLevelEvent'", [$App->auth->user['address']])),
 			'profit_usd' => $t * $this->getRates()['eth'],
-			'profit_by_levels' => $Db->rows("SELECT `level` + 1, SUM(`value`) 'profit' FROM `sk_events` WHERE `user` = ? AND `type` = 'Profit' GROUP BY `level`", [$App->auth->user['address']], PDO::FETCH_KEY_PAIR),
+			'profit_by_levels' => $Db->rows("SELECT `level`, (COUNT(*) * (SELECT price FROM levels WHERE id = sk_events.level)) 'profit' FROM `sk_events` WHERE `user` = ? AND `type` = 'getMoneyForLevelEvent' GROUP BY `level`", [$App->auth->user['address']], PDO::FETCH_KEY_PAIR),
 			'referrals_by_date' => $referrals_by_date,
 		], [
 			'js' => [
@@ -81,21 +81,21 @@
 				'all' => count($Db->rows("SELECT '' FROM `sk_events` GROUP BY `tx`")),
 				'week' => count($Db->rows("SELECT '' FROM `sk_events` WHERE `time` > UNIX_TIMESTAMP() - 86400 * 7 GROUP BY `tx`")),
 				'day' => count($Db->rows("SELECT '' FROM `sk_events` WHERE `time` > UNIX_TIMESTAMP() - 86400 GROUP BY `tx`")),
-				'last' => $Db->rows("SELECT `time`, `user` 'address', IF(type = 'Register', 1, `level`) 'level', `value` 'amount' FROM `sk_events` WHERE `type` IN ('Register', 'UpLevel') ORDER BY `time` DESC LIMIT 10")
+				'last' => $Db->rows("SELECT `time`, `user` 'address', IF(type = 'regLevelEvent', 1, `level`) 'level', (SELECT price FROM levels WHERE id = IF(sk_events.type = 'regLevelEvent', 1, sk_events.level)) 'amount' FROM `sk_events` WHERE `type` IN ('regLevelEvent', 'buyLevelEvent') ORDER BY `time` DESC LIMIT 10")
 			],
 			'users' => [
 				'all' => $Db->val("SELECT COUNT(*) FROM `users`"),
 				'by_levels' =>
-					[1 => $Db->val("SELECT COUNT(*) FROM sk_events WHERE sk_events.type = 'Register'")]
-					+ $Db->rows("SELECT id,(SELECT COUNT(*) FROM sk_events WHERE sk_events.level = levels.id AND sk_events.type = 'UpLevel') FROM `levels`", [], PDO::FETCH_KEY_PAIR)
+					[1 => $Db->val("SELECT COUNT(*) FROM sk_events WHERE sk_events.type = 'regLevelEvent'")]
+					+ $Db->rows("SELECT id,(SELECT COUNT(*) FROM sk_events WHERE sk_events.level = levels.id AND sk_events.type = 'buyLevelEvent') FROM `levels`", [], PDO::FETCH_KEY_PAIR)
 			],
 			'rates' => [
 				'eth' => $rates['eth'],
 				'btc' => $rates['btc'],
 			],
 			'fees' => [
-				'all' => round($eth = $Db->val("SELECT SUM(`value`) FROM `sk_events` WHERE `type` = 'Profit'"), 2),
-				'day' => round($eth = $Db->val("SELECT SUM(`value`) FROM `sk_events` WHERE `type` = 'Profit' AND `time` > UNIX_TIMESTAMP() - 86400"), 2),
+				'all' => round($eth = $Db->val("SELECT SUM((SELECT `price` FROM `levels` WHERE `id` = sk_events.level)) FROM `sk_events` WHERE `type` = 'getMoneyForLevelEvent'"), 2),
+				'day' => round($eth = $Db->val("SELECT SUM((SELECT `price` FROM `levels` WHERE `id` = sk_events.level)) FROM `sk_events` WHERE `type` = 'getMoneyForLevelEvent' AND `time` > UNIX_TIMESTAMP() - 86400"), 2),
 			],
 			'contract' => module('site/service')->contract,
 			'days_left' => ceil((time() - $Db->val("SELECT MIN(`time`) FROM `sk_events`")) / 86400)

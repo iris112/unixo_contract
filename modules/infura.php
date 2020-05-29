@@ -6,9 +6,6 @@
 	// Ключ АПИ
 	$this->key = '';
 
-	// Сеть
-	$this->network = 'mainnet';
-
 	// Разбить даные на масив
 	$this->parseData = function($data) {
 		return explode(PHP_EOL, trim(chunk_split(substr($data, 2), 64)));
@@ -18,7 +15,7 @@
 	$this->api = function($method, $params = []) use(&$Fetch) {
 		static $query_id;
 
-		$req = $Fetch->query('https://'.$this->network.'.infura.io/v3/'.$this->key, [
+		$req = $Fetch->query('https://mainnet.infura.io/v3/'.$this->key, [
 			'method' => 'POST',
 			'headers' => ['Content-Type' => 'application/json'],
 			'body' => json_encode([

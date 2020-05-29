@@ -4,11 +4,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<script>'fetch' in window && 'CSS' in window && CSS.supports('color', 'var(--)') ? '' : location.href = '/badbrowser/'</script>
-		<title><?= $title ?: l('UNIXO - Personal Account'); ?></title>
-		<meta name="description" content="<?= l('UNIXO - Personal Account'); ?>"/>
-		<meta name="keywords" content="<?= l('UNIXO, smart-contracts, eth, ethereum'); ?>"/>
-		<meta property="og:title" content="<?= l('UNIXO - Personal Account'); ?>">
-		<meta property="og:description" content="<?= l('UNIXO - Personal Account'); ?>">
+		<title><?= $title ?: l('ETHRUN - Personal Account'); ?></title>
+		<meta name="description" content="<?= l('ETHRUN - Personal Account'); ?>"/>
+		<meta name="keywords" content="<?= l('ETHRUN, smart-contracts, eth, ethereum'); ?>"/>
+		<meta property="og:title" content="<?= l('ETHRUN - Personal Account'); ?>">
+		<meta property="og:description" content="<?= l('ETHRUN - Personal Account'); ?>">
 		<meta property="og:url" content="<?= $this->origin ?>">
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="/modules/site/layout/assets/common.css?<?= filemtime(__DIR__.'/../assets/common.css') ?>">

@@ -38,8 +38,7 @@
 					<div class="info-blocks__value"><?= ($t = @max(array_keys($my_levels))) ?: 0; ?> <?= l('Уровень'); ?></div>
 					<? if($t < 10) : ?>
 						<div class="info-blocks__more">
-							<!--<button class="btn btn_transparent small" onclick="buyLevel(<?= $t + 1; ?>, <?= $levels[$t]['price'] ?>)"><?= l('Поднять'); ?></button>
-							<button class="btn btn_transparent small" onclick="buyLevel(1, <?= $levels[0]['price'] ?>)"><?= l('Продлить'); ?></button>-->
+							<button class="btn btn_transparent small" onclick="buyLevel(<?= $t + 1; ?>, <?= $levels[$t]['price'] ?>)"><?= l('Поднять'); ?></button>
 						</div>
 					<? endif; ?>
 				</div>
@@ -70,13 +69,13 @@
 						<div class="levels__date"><?= l('Неактивно'); ?></div>
 					<? endif; ?>
 					<div class="levels__price"><?= $v['price'] ?> ETH</div>
-					<!--<? if($a) : ?>
+					<? if($a) : ?>
 						<button class="levels__btn btn btn_primary btn_transparent small" onclick="buyLevel(<?= $v['id'] ?>, <?= $v['price'] ?>)"><?= l('Продлить'); ?></button>
 					<? elseif($v['id'] == 1 && $my_levels[$v['id']] == 0) : ?>
 						<button class="levels__btn btn btn_primary small" disabled><?= l('Pending..'); ?></button>
 					<? else : ?>
 						<button class="levels__btn btn btn_primary small" onclick="buyLevel(<?= $v['id'] ?>, <?= $v['price'] ?>)"><?= l('Купить'); ?></button>
-					<? endif; ?>-->
+					<? endif; ?>
 				</li>
 			<? endforeach; ?>
 		</ul>
