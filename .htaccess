@@ -1,0 +1,29 @@
+php_flag magic_quotes_gpc Off
+
+AddDefaultCharset utf-8
+Options -Indexes
+RewriteEngine on
+Options +FollowSymLinks
+
+# Редирект на сайт без WWW
+RewriteCond %{HTTP_HOST} ^www\.(.*)$
+RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
+# Редирект на страницу со слешем в конце
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^.]+)(?<!/)$ /$1/ [R=301,L]
+
+# Перенаправление CEO урлов
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php
+
+# Защита от атак
+<ifModule mod_headers.c>
+	Header set X-XSS-Protection "1; mode=block"
+	Header set X-Frame-Options "DENY"
+	Header set X-Content-Type-Options "nosniff"
+	Header set Strict-Transport-Security "max-age=7884000"
+	Header set Referrer-Policy "origin-when-cross-origin"
+</IfModule>

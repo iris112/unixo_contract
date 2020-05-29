@@ -1,0 +1,41 @@
+.info-blocks { display:flex; margin:10px -10px -10px; flex-wrap:wrap; }
+	.info-blocks__item { background:var(--primary-color); margin:0 10px 10px; flex:1 0; padding:20px; border-radius:3px; position:relative; min-height:120px; min-width:250px; }
+		.info-blocks__item:nth-child(2) { background:var(--success-color); }
+		.info-blocks__item:nth-child(3) { background:var(--error-color); }
+		.info-blocks__item:nth-child(4) { background:var(--warning-color); }
+	.info-blocks__label { font-size:18px; color:#fff; max-width:100px; font-weight:lighter; }
+	.info-blocks__icon { position:absolute; right:20px; top:20px; }
+	.info-blocks__footer { margin:40px 0 0; display:flex; align-items:center; }
+	.info-blocks__value { font-size:28px; color:#fff; flex:1 0; }
+	.info-blocks__more {}
+.info-charts { margin:30px -10px 0; display:flex; }
+	.info-charts > * { margin:0 10px; flex:1 0; }
+.levels { margin:30px -3px -6px; display:flex; list-style:none; flex-wrap:wrap; }
+	.levels > li { margin:0 3px 6px; flex:1 0; border-bottom:4px solid #BEC1C4; background:#fff; border-radius:3px; padding:10px; position:relative; min-width:109px; max-width:110px; }
+		.levels > li.active { border-color:var(--warning-color); }
+	.levels__name { color:#6C757D; }
+		.levels > li.active .levels__name { color:var(--warning-color); }
+	.levels__check { color:var(--success-color); position:absolute; top:13px; right:10px; }
+	.levels__date { color:#BEC1C4; font-size:12px; padding:7px 0 5px; border-bottom:1px dashed #eee; }
+		.levels__date b { color:var(--success-color); font-weight:normal; }
+	.levels__price { padding:7px 0; color:var(--secondary-color); font-size:18px; }
+	.levels__btn { width:100%; }
+.social { }
+	.social a { width:28px; height:28px; background:rgba(255,255,255,0.7); border-radius:100%; font-size:15px; color:var(--error-color); margin:0 3px; transition:0.2s; display:inline-flex; align-items:center; justify-content:center; }
+		.social a:hover { background:#fff; text-decoration:none; }
+
+/* For L devices */
+@media (max-width:1199.98px) {
+	.info-charts { flex-wrap:wrap; margin:30px 0 -10px; }
+		.info-charts > * { flex:1 0 100%; margin:0 0 10px; } 
+}
+
+/* For XS devices */
+@media (max-width:575.98px) {
+	.levels > li { flex:0 0 calc(50% - 6px) ; max-width:initial; min-width:initial; }
+}
+
+/* For XXS devices */
+@media (max-width:439.98px) {
+	.info-charts { display:none; }
+}

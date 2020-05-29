@@ -1,0 +1,23 @@
+#tree {}
+	#tree .node circle { fill:#fff; stroke:steelblue; stroke-width:3px; }
+	#tree .node text { font:12px sans-serif; font-weight:bold; }
+		#tree .node text[text-anchor] { font-weight:normal; }
+	#tree .link { fill:none; stroke:#ccc; stroke-width:2px; }
+.social { margin:10px -5px 0; }
+	.social a { width:32px; height:32px; background:rgba(0,0,0,0.05); border-radius:100%; font-size:16px; color:var(--secondary-color); margin:0 5px; transition:0.2s; display:inline-flex; align-items:center; justify-content:center; }
+		.social a:hover { background:var(--secondary-color); color:#fff; text-decoration:none; }
+.partner { display:flex; margin:-10px -10px; }
+	.partner > * { margin:10px; flex:1 0; }
+	.partner__link { display:flex; }
+	.partner__link > input { flex:1 0; margin-right:10px; }
+	.partner__info { margin:20px 0 0; }
+
+/* For XS devices */
+@media (max-width:575.98px) {
+	.partner { flex-wrap:wrap; }
+		.partner > * { flex:1 0 100%; }
+		.partner__link { flex-direction:column; }
+		.partner__link > input { margin-right:0; }
+		.partner__link > button { margin-top:10px; }
+	.social { text-align:center; }
+}

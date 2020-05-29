@@ -1,0 +1,46 @@
+.auth { flex:1 0; background:#161515; padding:0 40px; }
+	.auth__wrap { background:#fff; display:flex; max-width:1000px; margin:160px auto 40px; text-align:center; position:relative; }
+	.auth_lang { position:absolute; top:-31px; right:0; }
+		.auth_lang > span { color:#fff; padding-bottom:15px; } 
+	.auth__left { flex:1 0 50%; padding:50px 108px 70px; }
+	.auth__title { font-size:28px; }
+	.auth__subtitle { color:#6C757D; margin:10px 0 0; }
+	.auth__subtitle2 { color:#BEC1C4; margin:20px 0 0; }
+	.auth__desc { text-align:left; margin:10px 0 0; }
+		.auth__desc p { margin:7px 0; }
+	.auth__icons { margin:20px 0 0; }
+	.auth__btn { margin:15px 0 0; width:100%; }
+	.auth__inp { margin:15px 0 0; width:100%; }
+	.auth__right { flex:1 0 50%; background:#252629; padding:40px 108px 30px; }
+	.auth__social { margin:10px 0 0; }
+		.auth__social a { width:46px; height:46px; background:rgba(255,255,255,0.1); border-radius:100%; font-size:18px; color:#fff; margin:0 10px; transition:0.2s; display:inline-flex; align-items:center; justify-content:center; }
+			.auth__social a:hover { background:rgba(255,255,255,0.3); text-decoration:none; }
+	.auth__links { margin:40px -50px 0; }
+		.auth__links a { margin:0 20px; display:inline-block; }
+	.auth__notify { margin:0 auto 40px; max-width:1000px; background:#fdefde; border-radius:3px; padding:15px 20px; color:var(--warning-color); }
+		.auth__notify i { font-size:26px; float:left; margin:0 10px 0 0; }
+
+/* For L devices */
+@media (max-width:1199.98px) {
+	.auth__left { padding:50px 80px 70px; }
+	.auth__right { padding:40px 80px 30px; }
+}
+
+/* For M devices */
+@media (max-width:991.98px) {
+	.auth__left { padding:50px 40px 70px; }
+	.auth__right { padding:40px 40px 30px; }
+}
+
+/* For S devices */
+@media (max-width:767.98px) {
+	.auth__left { flex:1 0 100%; }
+	.auth__right { display:none; }
+}
+
+/* For XS devices */
+@media (max-width:575.98px) {
+	.auth { padding:0 20px; }
+	.auth__wrap { margin:40px auto; }
+	.auth__left { padding:20px; }
+}
